@@ -1,16 +1,22 @@
 import axios from "axios";
-import { useState, createContext } from "react";
+import { useState, createContext, useCallback } from "react";
 
 const BookContext = createContext();
 
 const Provider = ({ children }) => {
   const [books, setBooks] = useState([]);
 
-  const fetchBooks = async () => {
+  const fetchBooks = useCallback(async () => {
     const response = await axios.get("http://localhost:3006/books");
 
     setBooks(response.data);
-  };
+  },[]) ;
+
+  // This will run us into an error of infinite requests, if we provide our fetch books function in useEffect with fetchBooks dependency array.
+  // const fetchBooks = async () => {
+  //   const response = await axios.get("http://localhost:3006/books");
+  //   setBooks(response.data);
+  // };
 
   const editBookById = async (id, newTitle) => {
     const response = await axios.put(`http://localhost:3006/books/${id}`, {
